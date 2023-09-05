@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import ToggleTheme from '@/components/ToggleTheme.vue'
 </script>
 
 <template>
@@ -13,10 +14,11 @@ import HelloWorld from './components/HelloWorld.vue'
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/checkout">BootstrapTest</RouterLink>
       </nav>
     </div>
   </header>
-
+  <ToggleTheme />
   <RouterView />
 </template>
 

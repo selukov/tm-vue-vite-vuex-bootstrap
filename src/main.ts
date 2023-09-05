@@ -1,4 +1,8 @@
 import './assets/main.css'
+// Import our custom CSS
+import 'bootstrap/scss/bootstrap.scss'
+// Import all of Bootstrap's JS
+import 'bootstrap'
 
 import { createApp } from 'vue'
 import App from './App.vue'
