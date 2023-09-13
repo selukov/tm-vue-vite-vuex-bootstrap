@@ -1,16 +1,38 @@
 <script setup lang="ts">
+import { onBeforeMount, onMounted } from 'vue'
+
+onBeforeMount(() => {
+  setTheme(getPreferredTheme())
+})
+
+onMounted(() => {
+  //setTheme(getPreferredTheme())
+  showActiveTheme(getPreferredTheme())
+  console.log('OnMounted')
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    const storedTheme = getStoredTheme()
+    if (storedTheme !== 'light' && storedTheme !== 'dark') {
+      setTheme(getPreferredTheme())
+    }
+  })
+})
+
 const getStoredTheme = (): string | null => localStorage.getItem('theme')
 const setStoredTheme = (theme: string): void => localStorage.setItem('theme', theme)
 
 const getPreferredTheme = (): string => {
+  console.log('getPreferredTheme')
   const storedTheme = getStoredTheme()
+  console.log(storedTheme)
   if (storedTheme) {
     return storedTheme
   }
+  console.log('getPreferredTheme')
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
 const setTheme = (theme: string): void => {
+  console.log('setTheme')
   if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.documentElement.setAttribute('data-bs-theme', 'dark')
   } else {
@@ -18,63 +40,42 @@ const setTheme = (theme: string): void => {
   }
 }
 
-setTheme(getPreferredTheme())
-
 const showActiveTheme = (theme: string, focus = false): void => {
   const themeSwitcher = document.querySelector<HTMLButtonElement>('#bd-theme')
-  console.log(themeSwitcher)
+
   if (!themeSwitcher) {
     return
   }
 
   const themeSwitcherText = document.querySelector<HTMLSpanElement>('#bd-theme-text')
-  console.log(themeSwitcherText)
   const activeThemeIcon = document.querySelector<SVGUseElement>('.theme-icon-active use')
-  console.log(activeThemeIcon)
   const btnToActive = document.querySelector<HTMLElement>(`[data-bs-theme-value="${theme}"]`)
-  console.log(btnToActive)
+  if (!btnToActive) {
+    return
+  }
   const svgOfActiveBtn = btnToActive.querySelector<SVGUseElement>('svg use')!.getAttribute('href')!
-  console.log(svgOfActiveBtn)
+
   document.querySelectorAll<HTMLElement>('[data-bs-theme-value]').forEach((element) => {
     element.classList.remove('active')
-    console.log('[data-bs-theme-value]')
     element.setAttribute('aria-pressed', 'false')
   })
 
   btnToActive.classList.add('active')
   btnToActive.setAttribute('aria-pressed', 'true')
-  activeThemeIcon.setAttribute('href', svgOfActiveBtn)
-  const themeSwitcherLabel = `${themeSwitcherText!.textContent} (${
-    btnToActive.dataset.bsThemeValue
-  })`
+  activeThemeIcon?.setAttribute('href', svgOfActiveBtn)
+  const themeSwitcherLabel = `${themeSwitcherText!.textContent} (${btnToActive?.dataset
+    .bsThemeValue})`
   themeSwitcher.setAttribute('aria-label', themeSwitcherLabel)
 
   if (focus) {
     themeSwitcher.focus()
   }
 }
-
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  const storedTheme = getStoredTheme()
-  console.log('matchMedia')
-  if (storedTheme !== 'light' && storedTheme !== 'dark') {
-    setTheme(getPreferredTheme())
-  }
-})
-
-window.addEventListener('DOMContentLoaded', () => {
-  showActiveTheme(getPreferredTheme())
-  console.log('data-bs-theme-value')
-  document.querySelectorAll('[data-bs-theme-value]').forEach((toggle) => {
-    toggle.addEventListener('click', () => {
-      const theme = toggle.getAttribute('data-bs-theme-value')!
-      setStoredTheme(theme)
-      console.log('DOMContentLoaded')
-      setTheme(theme)
-      showActiveTheme(theme, true)
-    })
-  })
-})
+const Toggle = (theme: string): void => {
+  setStoredTheme(theme)
+  setTheme(theme)
+  showActiveTheme(theme, true)
+}
 </script>
 
 <template>
@@ -120,6 +121,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <button
           type="button"
           class="dropdown-item d-flex align-items-center"
+          @click="Toggle('light')"
           data-bs-theme-value="light"
           aria-pressed="false"
         >
@@ -134,6 +136,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <button
           type="button"
           class="dropdown-item d-flex align-items-center"
+          @click="Toggle('dark')"
           data-bs-theme-value="dark"
           aria-pressed="false"
         >
@@ -148,6 +151,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <button
           type="button"
           class="dropdown-item d-flex align-items-center active"
+          @click="Toggle('auto')"
           data-bs-theme-value="auto"
           aria-pressed="true"
         >
