@@ -1,6 +1,10 @@
-# vite-bootstrap-vuex
+# Starter template based on Vite, Vue 3, Vuex, Bootstrap 5 with Dark Theme and Typescript
 
-This template should help get you started developing with Vue 3 in Vite.
+This template was created to help web developers jumpstart their development.
+It uses **Vue 3** and **Typescript** support and added **Bootstrap 5** with support for **Dark Themes**.
+
+Dark theme support in Bootstrap, by default, comes from version 5.3.0, which is currently an Alpha release. Therefore, it should be installed explicitly, and you should test it well before adding it to the production environment.
+
 
 ## Recommended IDE Setup
 
